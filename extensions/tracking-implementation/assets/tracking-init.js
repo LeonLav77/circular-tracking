@@ -1,69 +1,115 @@
-console.log("a");
-
-// Helper functions for cookie management
+// Cookie helpers
 function setCookie(name, value, days = 7) {
     const expires = new Date();
-    expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+    expires.setTime(expires.getTime() + (days * 86400000)); // 86400000 ms = 1 day
+    document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
 }
 
 function getCookie(name) {
-    const nameEQ = name + "=";
-    const ca = document.cookie.split(';');
-    for(let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    const nameEQ = `${name}=`;
+    const cookies = document.cookie.split(';');
+    
+    for (const cookie of cookies) {
+        const trimmed = cookie.trim();
+        if (trimmed.startsWith(nameEQ)) {
+            return decodeURIComponent(trimmed.substring(nameEQ.length));
+        }
     }
+
     return null;
 }
 
-// Check URL first, then cookie
-const urlParams = new URLSearchParams(window.location.search);
-let transactionId = urlParams.get("transaction_id");
+// Get transaction ID from URL or cookie
+function getTransactionId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    let transactionId = urlParams.get('transaction_id');
 
-if (transactionId) {
-    // If found in URL, store it in cookie for future pages
-    setCookie("transaction_id", transactionId);
-    console.log("Transaction ID from URL:", transactionId);
-} else {
-    // If not in URL, check cookie
-    transactionId = getCookie("transaction_id");
-    console.log("Transaction ID from cookie:", transactionId);
+    if (transactionId) {
+        setCookie('transaction_id', transactionId);
+        console.log('Transaction ID from URL:', transactionId);
+        return transactionId;
+    }
+
+    transactionId = getCookie('transaction_id');
+    if (transactionId) {
+        console.log('Transaction ID from cookie:', transactionId);
+    }
+
+    return transactionId;
 }
 
-console.log("Final transaction ID:", transactionId);
-
-if (transactionId) {
-    // Update cart with transaction ID
-    fetch('/cart.js')
-    .then(res => res.json())
-    .then(cart => {
-        return fetch('/cart/update.js', {
+async function updateCart(transactionId) {
+    try {
+        await fetch('/cart.js');
+        
+        const response = await fetch('/cart/update.js', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                attributes: {
-                    transaction_id: transactionId,
-                }
-            }),
+                attributes: { transaction_id: transactionId }
+            })
         });
-    })
-    .catch(error => console.error('Error updating cart:', error));
 
-    // Find all product forms (including "Buy It Now" forms)
-    const productForms = document.querySelectorAll('form[action^="/cart/add"]');
-    console.log("Found product forms:", productForms.length);
-    
-    productForms.forEach((form) => {
-        // Check if the hidden input already exists
-        if (!form.querySelector('input[name="properties[transaction_id]"]')) {
-            const hiddenInput = document.createElement("input");
-            hiddenInput.type = "hidden";
-            hiddenInput.name = "properties[transaction_id]";
-            hiddenInput.value = transactionId;
-            form.appendChild(hiddenInput);
-            console.log("Added transaction ID to form");
+        if (response.ok) {
+            console.log('Cart updated with transaction ID');
+        }
+    } catch (error) {
+        console.error('Failed to update cart:', error);
+    }
+}
+
+function addToForms(transactionId) {
+    const forms = document.querySelectorAll('form[action^="/cart/add"]');
+    console.log(`Found ${forms.length} product forms`);
+
+    forms.forEach(form => {
+        const inputName = 'properties[transaction_id]';
+        
+        if (!form.querySelector(`input[name="${inputName}"]`)) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = inputName;
+            input.value = transactionId;
+            form.appendChild(input);
         }
     });
+}
+
+// Watch for new forms added dynamically
+function watchForNewForms(transactionId) {
+    if (typeof MutationObserver === 'undefined') return;
+
+    const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+            mutation.addedNodes.forEach(node => {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    const newForms = node.matches?.('form[action^="/cart/add"]') 
+                        ? [node] 
+                        : node.querySelectorAll?.('form[action^="/cart/add"]') || [];
+                    
+                    newForms.forEach(form => addToForms(transactionId));
+                }
+            });
+        });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+}
+
+// Initialize everything
+function initTransactionId() {
+    const transactionId = getTransactionId();
+    
+    if (transactionId) {
+        updateCart(transactionId);
+        addToForms(transactionId);
+        watchForNewForms(transactionId);
+    }
+}
+
+// Run when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTransactionId);
+} else {
+    initTransactionId();
 }

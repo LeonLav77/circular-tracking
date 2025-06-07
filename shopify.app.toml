@@ -3,7 +3,7 @@
 client_id = "64c2d87b96ae07643d7269e874a8e61b"
 name = "Circular-Wealth-Tracking"
 handle = "circular-wealth-tracking"
-application_url = "https://guidelines-fate-collect-points.trycloudflare.com"
+application_url = "https://buffalo-diagnosis-rick-impaired.trycloudflare.com"
 embedded = true
 
 [build]
@@ -27,9 +27,9 @@ scopes = "unauthenticated_read_metaobjects,write_products,read_themes,write_them
 
 [auth]
 redirect_urls = [
-  "https://guidelines-fate-collect-points.trycloudflare.com/auth/callback",
-  "https://guidelines-fate-collect-points.trycloudflare.com/auth/shopify/callback",
-  "https://guidelines-fate-collect-points.trycloudflare.com/api/auth/callback"
+  "https://buffalo-diagnosis-rick-impaired.trycloudflare.com/auth/callback",
+  "https://buffalo-diagnosis-rick-impaired.trycloudflare.com/auth/shopify/callback",
+  "https://buffalo-diagnosis-rick-impaired.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
