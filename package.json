@@ -1,5 +1,5 @@
 {
-  "name": "circular-wealth-tracking",
+  "name": "Test1",
   "private": true,
   "scripts": {
     "build": "remix vite:build",
