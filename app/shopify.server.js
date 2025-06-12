@@ -20,29 +20,89 @@ async function fetchConfig() {
   };
 }
 
-// Initialize with fetched config
-const config = await fetchConfig();
+// Cache for the shopify instance
+let shopifyInstance = null;
+let shopifyPromise = null;
 
-const shopify = shopifyApp({
-  apiKey: config.apiKey,
-  apiSecretKey: config.apiSecretKey || "",
-  apiVersion: ApiVersion.January25,
-  scopes: config.scopes,
-  appUrl: config.appUrl || "",
-  authPathPrefix: "/auth",
-  sessionStorage: new PrismaSessionStorage(prisma),
-  distribution: AppDistribution.AppStore,
-  future: {
-    unstable_newEmbeddedAuthStrategy: false,
-    removeRest: true,
-  },
+// Lazy initialization function
+async function initializeShopify() {
+  if (shopifyInstance) {
+    return shopifyInstance;
+  }
+
+  if (shopifyPromise) {
+    return shopifyPromise;
+  }
+
+  shopifyPromise = (async () => {
+    const config = await fetchConfig();
+    
+    shopifyInstance = shopifyApp({
+      apiKey: config.apiKey,
+      apiSecretKey: config.apiSecretKey || "",
+      apiVersion: ApiVersion.January25,
+      scopes: config.scopes,
+      appUrl: config.appUrl || "",
+      authPathPrefix: "/auth",
+      sessionStorage: new PrismaSessionStorage(prisma),
+      distribution: AppDistribution.AppStore,
+      future: {
+        unstable_newEmbeddedAuthStrategy: false,
+        removeRest: true,
+      },
+    });
+
+    return shopifyInstance;
+  })();
+
+  return shopifyPromise;
+}
+
+// Proxy object that lazily loads shopify methods
+const shopifyProxy = new Proxy({}, {
+  get(target, prop) {
+    if (prop === 'then' || prop === 'catch' || prop === 'finally') {
+      // Handle Promise-like behavior
+      return undefined;
+    }
+    
+    return async (...args) => {
+      const shopify = await initializeShopify();
+      return shopify[prop](...args);
+    };
+  }
 });
 
-export default shopify;
+export default shopifyProxy;
 export const apiVersion = ApiVersion.January25;
-export const addDocumentResponseHeaders = shopify.addDocumentResponseHeaders;
-export const authenticate = shopify.authenticate;
-export const unauthenticated = shopify.unauthenticated;
-export const login = shopify.login;
-export const registerWebhooks = shopify.registerWebhooks;
-export const sessionStorage = shopify.sessionStorage;
+
+// Export lazy-loaded methods
+export const addDocumentResponseHeaders = async (...args) => {
+  const shopify = await initializeShopify();
+  return shopify.addDocumentResponseHeaders(...args);
+};
+
+export const authenticate = async (...args) => {
+  const shopify = await initializeShopify();
+  return shopify.authenticate(...args);
+};
+
+export const unauthenticated = async (...args) => {
+  const shopify = await initializeShopify();
+  return shopify.unauthenticated(...args);
+};
+
+export const login = async (...args) => {
+  const shopify = await initializeShopify();
+  return shopify.login(...args);
+};
+
+export const registerWebhooks = async (...args) => {
+  const shopify = await initializeShopify();
+  return shopify.registerWebhooks(...args);
+};
+
+export const sessionStorage = async (...args) => {
+  const shopify = await initializeShopify();
+  return shopify.sessionStorage(...args);
+};
