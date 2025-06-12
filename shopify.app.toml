@@ -3,7 +3,7 @@
 client_id = "64c2d87b96ae07643d7269e874a8e61b"
 name = "Circular-Wealth-Tracking"
 handle = "circular-wealth-tracking"
-application_url = "https://buffalo-diagnosis-rick-impaired.trycloudflare.com"
+application_url = "https://circular-tracking.onrender.com"
 embedded = true
 
 [build]
@@ -27,9 +27,9 @@ scopes = "unauthenticated_read_metaobjects,write_products,read_themes,write_them
 
 [auth]
 redirect_urls = [
-  "https://buffalo-diagnosis-rick-impaired.trycloudflare.com/auth/callback",
-  "https://buffalo-diagnosis-rick-impaired.trycloudflare.com/auth/shopify/callback",
-  "https://buffalo-diagnosis-rick-impaired.trycloudflare.com/api/auth/callback"
+  "https://circular-tracking.onrender.com/auth/callback",
+  "https://circular-tracking.onrender.com/auth/shopify/callback",
+  "https://circular-tracking.onrender.com/api/auth/callback"
 ]
 
 [pos]
