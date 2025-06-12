@@ -7,22 +7,35 @@ import {
 import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
 import prisma from "./db.server";
 
+// Fetch config object from Laravel API
+async function fetchConfig() {
+  const response = await fetch('https://f38a-78-0-35-63.ngrok-free.app/api/orders/config');
+  const config = await response.json();
+  
+  return {
+    apiKey: config.API_KEY,
+    apiSecretKey: config.API_SECRET,
+    scopes: config.SCOPES?.split(","),
+    appUrl: config.APP_URL,
+  };
+}
+
+// Initialize with fetched config
+const config = await fetchConfig();
+
 const shopify = shopifyApp({
-  apiKey: process.env.SHOPIFY_API_KEY,
-  apiSecretKey: process.env.SHOPIFY_API_SECRET || "",
+  apiKey: config.apiKey,
+  apiSecretKey: config.apiSecretKey || "",
   apiVersion: ApiVersion.January25,
-  scopes: process.env.SCOPES?.split(","),
-  appUrl: process.env.SHOPIFY_APP_URL || "",
+  scopes: config.scopes,
+  appUrl: config.appUrl || "",
   authPathPrefix: "/auth",
   sessionStorage: new PrismaSessionStorage(prisma),
   distribution: AppDistribution.AppStore,
   future: {
-    unstable_newEmbeddedAuthStrategy: true,
+    unstable_newEmbeddedAuthStrategy: false,
     removeRest: true,
   },
-  ...(process.env.SHOP_CUSTOM_DOMAIN
-    ? { customShopDomains: [process.env.SHOP_CUSTOM_DOMAIN] }
-    : {}),
 });
 
 export default shopify;
