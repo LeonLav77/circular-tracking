@@ -1,5 +1,5 @@
 {
-  "name": "circular-wealth-tracking",
+  "name": "Test1",
   "private": true,
   "scripts": {
     "build": "remix vite:build",
@@ -11,10 +11,8 @@
     "env": "shopify app env",
     "start": "remix-serve ./build/server/index.js",
     "docker-start": "npm run setup && npm run start",
-    "setup": "prisma generate && prisma migrate deploy",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "shopify": "shopify",
-    "prisma": "prisma",
     "graphql-codegen": "graphql-codegen",
     "vite": "vite"
   },
@@ -23,7 +21,6 @@
     "node": "^18.20 || ^20.10 || >=21.0.0"
   },
   "dependencies": {
-    "@prisma/client": "^6.9.0",
     "@remix-run/dev": "^2.16.1",
     "@remix-run/fs-routes": "^2.16.1",
     "@remix-run/node": "^2.16.1",
@@ -32,7 +29,6 @@
     "@shopify/app-bridge-react": "^4.1.6",
     "@shopify/polaris": "^12.0.0",
     "@shopify/shopify-app-remix": "^3.7.0",
-    "@shopify/shopify-app-session-storage-prisma": "^6.0.0",
     "isbot": "^5.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -49,7 +45,6 @@
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^10.0.1",
     "prettier": "^3.2.4",
-    "prisma": "^6.9.0",
     "typescript": "^5.2.2",
     "vite": "^6.2.2"
   },
