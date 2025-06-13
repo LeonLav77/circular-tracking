@@ -1,9 +1,9 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "64c2d87b96ae07643d7269e874a8e61b"
-name = "Circular-Wealth-Tracking"
-handle = "circular-wealth-tracking"
-application_url = "https://agricultural-deep-ty-consent.trycloudflare.com"
+client_id = "fb1a3b38f493c919b0a41f3ab9c98947"
+name = "Test10"
+handle = "test9-28"
+application_url = "https://circular-tracking-test10.vercel.app/"
 embedded = true
 
 [build]
@@ -15,21 +15,19 @@ api_version = "2025-04"
 
   [[webhooks.subscriptions]]
   topics = [ "app/uninstalled" ]
-  uri = "https://5ca3-93-140-158-222.ngrok-free.app/app-uninstalled-webhook"
+  uri = "https://c42b-93-140-177-43.ngrok-free.app/app-uninstalled-webhook"
 
   [[webhooks.subscriptions]]
   topics = [ "orders/create" ]
-  uri = "https://5ca3-93-140-158-222.ngrok-free.app/order-webhook"
+  uri = "https://c42b-93-140-177-43.ngrok-free.app/order-webhook"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "unauthenticated_read_metaobjects,write_products,read_themes,write_themes,read_products,write_script_tags,read_script_tags,write_customers,read_customers,write_orders,read_orders,write_draft_orders,read_draft_orders,write_price_rules,read_price_rules,write_discounts,read_discounts,write_fulfillments,read_fulfillments,read_cart_transforms"
+scopes = "read_cart_transforms,read_customers,read_discounts,read_draft_orders,read_fulfillments,read_orders,read_price_rules,read_products,read_script_tags,read_themes,unauthenticated_read_metaobjects,write_customers,write_discounts,write_draft_orders,write_fulfillments,write_orders,write_price_rules,write_products,write_script_tags,write_themes"
 
 [auth]
 redirect_urls = [
-  "https://agricultural-deep-ty-consent.trycloudflare.com/auth/callback",
-  "https://agricultural-deep-ty-consent.trycloudflare.com/auth/shopify/callback",
-  "https://agricultural-deep-ty-consent.trycloudflare.com/api/auth/callback"
+  "https://circular-tracking-test10.vercel.app/auth/callback",
 ]
 
 [pos]
