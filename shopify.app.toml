@@ -1,9 +1,9 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "fb1a3b38f493c919b0a41f3ab9c98947"
-name = "Test10"
-handle = "test9-28"
-application_url = "https://circular-tracking-test10.vercel.app/"
+client_id = "3936f39facea21589f6caaf2e12a29ec"
+name = "Test11"
+handle = "test11-28"
+application_url = "https://circular-tracking-test11.vercel.app/"
 embedded = true
 
 [build]
@@ -27,7 +27,7 @@ scopes = "read_cart_transforms,read_customers,read_discounts,read_draft_orders,r
 
 [auth]
 redirect_urls = [
-  "https://circular-tracking-test10.vercel.app/auth/callback",
+  "https://circular-tracking-test11.vercel.app/auth/callback",
 ]
 
 [pos]
